@@ -23,15 +23,17 @@ occurrencesRouter.post('/', async(request, response) => {
 
 occurrencesRouter.get('/', async(request, response) => {
    
-    const {lat, long, radius, days} = request.query;
+    const {lat, long, radius, days, type} = request.query;
     const occurenceRepository = getRepository(Occurrence);
     const today = moment().format('YYYY-MM-DD');
 
-    let params = ``;
+    let params = `1 = 1`;
 
-    if (days !== undefined) params += `CAST("Occurrence"."datetime" as date) BETWEEN '${moment(today).subtract(days, 'days').format('YYYY-MM-DD')}' AND '${today}'`;
+    if (days !== undefined) params += `AND CAST("Occurrence"."datetime" as date) BETWEEN '${moment(today).subtract(days, 'days').format('YYYY-MM-DD')}' AND '${today}'`;
+
+    if (type !== undefined) params += `AND "Occurrence"."ocurence_type_id" = '${type}'`
    
-    const occurences = await occurenceRepository.find({where: params, order: {datetime: 'DESC'}, relations: ['address', 'bike', 'bike.user']})
+    const occurences = await occurenceRepository.find({where: params, order: {datetime: 'DESC'}, relations: ['address', 'bike']})
 
     const occurencesByRadius = radius !== undefined ? occurences.filter(o => CalculateDistanceByRadius(lat, long, o.address.latitude, o.address.longitude) <= radius) : occurences;
     
@@ -45,7 +47,7 @@ occurrencesRouter.get('/:userId', async(request, response) => {
     console.log(request.user)
     if (userId !== request.user.id) throw new AppError("Unauthorized action", 400);
 
-    const occurences = await occurenceRepository.find({where:`"Occurrence__bike"."user_id" = '${userId}'`, relations: ['address', 'bike', 'bike.user']})
+    const occurences = await occurenceRepository.find({where:`"Occurrence__bike"."user_id" = '${userId}'`, relations: ['address', 'bike']})
 
     return response.json(occurences);
 })

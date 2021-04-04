@@ -1,3 +1,4 @@
+import { v4 as uuidv4 } from 'uuid';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('adresses')
@@ -28,6 +29,7 @@ class Address {
 
   @Column("decimal", {precision: 9, scale: 6})
   longitude: number;
+
 }
 
 export default Address;
