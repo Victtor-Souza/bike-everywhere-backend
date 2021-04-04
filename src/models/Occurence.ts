@@ -39,7 +39,7 @@ class Occurrence {
 
   @OneToOne(() => Address)
   @JoinColumn({ name: 'address_id' })
-  address: Bike;
+  address: Address;
 }
 
 export default Occurrence;

@@ -1,9 +1,12 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity('adreses')
+@Entity('adresses')
 class Address {
   @PrimaryGeneratedColumn('uuid')
   id: string;
+
+  @Column()
+  number: string;
 
   @Column()
   route: string;
@@ -20,10 +23,10 @@ class Address {
   @Column()
   country: string;
 
-  @Column()
+  @Column("decimal", {precision: 9, scale: 6})
   latitude: number;
 
-  @Column()
+  @Column("decimal", {precision: 9, scale: 6})
   longitude: number;
 }
 
