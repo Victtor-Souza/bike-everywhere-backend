@@ -57,18 +57,19 @@ bikeRouter.delete('/:id', async (request, response) => {
   return response.status(204);
 });
 
-bikeRouter.get('/:userId', async(request, response) => {
+bikeRouter.get('/:userId', async (request, response) => {
+  const { userId } = request.params;
 
-  const {userId} = request.params;
-
-  if (userId !== request.user.id) throw new AppError("Unauthorized action", 400);
+  if (userId !== request.user.id)
+    throw new AppError('Unauthorized action', 400);
 
   const bikeRepository = getRepository(Bike);
 
-  const bikes = await bikeRepository.find({where: {user_id: userId} });
+  const bikes = await bikeRepository.find({
+    where: { user_id: userId },
+    relations: ['bike_type'],
+  });
   return response.json(bikes);
-
-
-})
+});
 
 export default bikeRouter;
